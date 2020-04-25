@@ -1,7 +1,10 @@
 package application.test;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -12,8 +15,13 @@ import java.util.List;
 @RequestMapping("/portal")
 public class SampleController {
 
-    @Autowired
-    private TopicsService topicsService;
+    private final TopicsService topicsService;
+    @Value("${localHost:http://localhost:8081/portal/topics}")
+    private String localHostUrl;
+
+    public SampleController(TopicsService topicsService) {
+        this.topicsService = topicsService;
+    }
 
     @RequestMapping(value = "/hello", method = RequestMethod.GET)
     public String hello(HttpServletRequest httpServletRequest){
@@ -43,5 +51,13 @@ public class SampleController {
     public boolean deleteTopics(@PathVariable String id, HttpServletRequest servletRequest){
         HttpSession session = servletRequest.getSession();
         return topicsService.deleteTopic(id);
+    }
+
+    @RequestMapping(value = "/topicsDuplicate", method = RequestMethod.GET)
+    public List<Topics> getTopicsDuplicate(){
+        ResponseEntity<Topics[]> responseEntity =  new RestTemplate().getForEntity(localHostUrl,Topics[].class);
+        Topics[] list = responseEntity.getBody();
+        assert list != null;
+        return Arrays.asList(list);
     }
 }
