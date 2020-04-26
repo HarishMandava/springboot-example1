@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -25,7 +26,8 @@ public class TopicsService {
     }
 
     public Topics getTopics(String id) {
-        return topicsRepository.findById(id).get();
+        Optional<Topics> topics = topicsRepository.findById(id);
+        return topics.orElseGet(Topics::new);
     }
 
     public boolean deleteTopic(String id) {
