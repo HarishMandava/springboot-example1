@@ -1,6 +1,5 @@
 package application.test;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,5 +58,10 @@ public class SampleController {
         Topics[] list = responseEntity.getBody();
         assert list != null;
         return Arrays.asList(list);
+    }
+
+    @RequestMapping(value = "/topics/{id}", method = RequestMethod.PUT)
+    public void updateTopics(@RequestBody Topics topics,@PathVariable String id){
+        topicsService.updateTopic(id,topics);
     }
 }
